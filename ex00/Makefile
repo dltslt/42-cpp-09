@@ -15,7 +15,7 @@
 PROG_NAME		?= btc
 # ----------------------------------------------------------------------------
 # arguments for executing the program in the various modes
-RUN_ARGS_reg	?= 
+RUN_ARGS_reg	?= test.txt
 RUN_ARGS_asan	?= 
 RUN_ARGS_val	?= 
 # ----------------------------------------------------------------------------

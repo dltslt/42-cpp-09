@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:38:31 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/12 22:15:10 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/12 23:26:34 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class BitcoinExchange
 	std::map<std::string, double> data_;
 	// internal control
 	void loadPriceData();
-	void loadInputData(const std::string&);
+	void processInputData(const std::string&);
 	// internal helpers
   public:
 	// external control
