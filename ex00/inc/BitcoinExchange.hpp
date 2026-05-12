@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:38:31 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/12 23:26:34 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 00:04:59 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ class BitcoinExchange
 	void loadPriceData();
 	void processInputData(const std::string&);
 	// internal helpers
+	void parsePriceData(const std::string&, std::string&, double&);
+	bool validInputData(const std::string&, std::string&, double&);
   public:
 	// external control
 	void execute(const std::string&);

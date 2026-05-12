@@ -16,8 +16,8 @@ PROG_NAME		?= btc
 # ----------------------------------------------------------------------------
 # arguments for executing the program in the various modes
 RUN_ARGS_reg	?= test.txt
-RUN_ARGS_asan	?= 
-RUN_ARGS_val	?= 
+RUN_ARGS_asan	?= test.txt
+RUN_ARGS_val	?= test.txt
 # ----------------------------------------------------------------------------
 VALGRIND_FLAGS	?=	--leak-check=full \
 					--show-leak-kinds=all --errors-for-leak-kinds=all\
