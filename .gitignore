@@ -1,0 +1,8 @@
+en.subject*
+bin/
+build/
+data.csv
+*.txt
+btc
+RPN
+PmergeMe
