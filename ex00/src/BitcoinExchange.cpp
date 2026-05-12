@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 01:04:17 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 01:40:03 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,10 @@ void BitcoinExchange::parsePriceData(
 	if (sep == std::string::npos || line.find(',', sep + 1) != std::string::npos)
 		throw std::runtime_error("Error: bad database >> " + line);
 	key = trimSpaces(line.substr(0, sep));
+	// TODO date validation
 	valueString = trimSpaces(line.substr(sep + 1,line.length()));
-	value = std::strtod(valueString.c_str(), NULL);
+	value = std::strtod(valueString.c_str(), NULL); // FIXME validation
+	// TODO value validation
 }
 
 // -----------------------------------------------------------------------------
@@ -85,36 +87,33 @@ void BitcoinExchange::processInputData(const std::string& inputFile)
 	std::string line;
 	std::string date;
 	double value;
+	double price;
+	int lineNr = 1;
 	// ---
 	if (!file.is_open())
 		throw std::runtime_error("Error: could not open input file.");
 	// ---
 	std::getline(file, line);
 	if (line != "date | value")
-		std::cerr << "Error: bad input, line 1 >> " << line << '\n';
+		std::cerr << "Error: bad input, line " << lineNr++ << " >> " << line << '\n';
 	// ---
 	while (std::getline(file, line))
 	{
-		if (validInputData(line, date, value))
-			std::cout << date << " => " << value << " = "
-					  << data_[date] * value << '\n';
+		if (!validInputData(line, date, value, lineNr))
+			continue ;
+		if (havePriceData(date, price))
+			std::cout << date << " => " << value << " = " << price * value << '\n';
+		else
+			std::cerr << "Error: bad input, line " << lineNr << " >> " << line << '\n';
 	}
 }
 
-bool BitcoinExchange::validInputData(
-	const std::string& line,
-	std::string& date,
-	double& value)
+bool BitcoinExchange::validInputData(const std::string& line, std::string& date,
+	double& value, int &lineNr)
 {
-	static int lineNr = 1;
 	std::string::size_type sep;
 	std::string valueString;
 	lineNr++;
-	if (line.length() < 13)
-	{
-		std::cerr << "Error: bad input, line " << lineNr<< " >> " << line << '\n';
-		return (false);
-	}
 	sep = line.find('|');
 	if (sep == std::string::npos || line.find('|', sep + 1) != std::string::npos)
 	{
@@ -122,13 +121,30 @@ bool BitcoinExchange::validInputData(
 		return (false);
 	}
 	date = trimSpaces(line.substr(0,sep));
+	// TODO date validation
 	valueString = trimSpaces(line.substr(13,line.length()));
-	value = std::strtod(valueString.c_str(), NULL);
-	if (data_.find(date) == data_.end())
+	value = std::strtod(valueString.c_str(), NULL); // FIXME validation
+	// TODO value validation
+	return (true);
+}
+
+bool BitcoinExchange::havePriceData(std::string& date, double& price)
+{
+	std::map<std::string, double>::const_iterator it;
+	// search for key (date), finds exact or NEXT element
+	it = data_.lower_bound(date);
+	// exact match found
+	if (it != data_.end() && it->first == date)
 	{
-		std::cerr << "Error: bad input, line " << lineNr << " >> " << line << '\n';
-		return (false);
+		price = it->second;
+		return (true);
 	}
+	// no match found, date is outside price data
+	if (it == data_.begin())
+		return (false);
+	// no match found, date is in price data range, take previous entry
+	--it;
+	price = it->second;
 	return (true);
 }
 
