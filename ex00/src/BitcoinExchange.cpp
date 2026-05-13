@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 02:16:44 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 03:04:29 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 #include <stdexcept>
 #include <iostream>
 #include <cstdlib>
+#include <cerrno>
+#include <cmath>
+#include <cfloat>
 
 // -----------------------------------------------------------------------------
 // API
@@ -66,16 +69,20 @@ void BitcoinExchange::parsePriceData(
 {
 	std::string::size_type sep;
 	std::string valueString;
-
+	// check separator
 	sep = line.find(',');
 	if (sep == std::string::npos || line.find(',', sep + 1) != std::string::npos)
 		throw std::runtime_error("Error: bad database >> " + line);
+	// get & check date
 	key = trimSpaces(line.substr(0, sep));
 	if (!validDate(key))
-		throw std::runtime_error("Error: bad database >> " + line);
+		throw std::runtime_error("Error: bad database date >> " + line);
+	// get & check value
 	valueString = trimSpaces(line.substr(sep + 1,line.length()));
-	value = std::strtod(valueString.c_str(), NULL); // FIXME add proper strtoX validation
-	// TODO value validation
+	if (!validValue(valueString, value))
+		throw std::runtime_error("Error: bad database value >> " + line);
+	if (value < 0.0)
+		throw std::runtime_error("Error: bad database value >> " + line);
 }
 
 // -----------------------------------------------------------------------------
@@ -115,21 +122,37 @@ bool BitcoinExchange::validInputData(const std::string& line, std::string& date,
 	std::string::size_type sep;
 	std::string valueString;
 	lineNr++;
+	// check separator
 	sep = line.find('|');
 	if (sep == std::string::npos || line.find('|', sep + 1) != std::string::npos)
 	{
 		std::cerr << "Error: bad input, line " << lineNr << " >> " << line << '\n';
 		return (false);
 	}
+	// get & check date
 	date = trimSpaces(line.substr(0,sep));
 	if (!validDate(date))
 	{
 		std::cerr << "Error: bad input date, line " << lineNr << " >> " << line << '\n';
 		return (false);
 	}
+	// get & check value
 	valueString = trimSpaces(line.substr(13,line.length()));
-	value = std::strtod(valueString.c_str(), NULL); // FIXME add proper strtoX validation
-	// TODO value validation
+	if (!validValue(valueString, value))
+	{
+		std::cerr << "Error: bad input value, line " << lineNr << " >> " << line << '\n';
+		return (false);
+	}
+	if (value < 0.0)
+	{
+		std::cerr << "Error: not a positive number, line " << lineNr << " >> " << line << '\n';
+		return (false);
+	}
+	if (value > 1000.0)
+	{
+		std::cerr << "Error: too large a number, line " << lineNr << " >> " << line << '\n';
+		return (false);
+	}
 	return (true);
 }
 
@@ -176,8 +199,8 @@ bool BitcoinExchange::validDate(const std::string& date)
 	// basic character check
 	if (date.length() != 10 || date[4] != '-' || date[7] != '-')
 		return (false);
-	// transformation with advanced character check
-	// FIXME add proper strtoX validation
+	// transformation
+	// don't need strtol valididation here; anything is caught by other checks
 	year = std::strtol(date.substr(0, 4).c_str(), NULL, 10);
 	month = std::strtol(date.substr(5, 2).c_str(), NULL, 10);
 	day = std::strtol(date.substr(8, 2).c_str(), NULL, 10);
@@ -193,6 +216,23 @@ bool BitcoinExchange::validDate(const std::string& date)
 		return (false);
 	return (true);
 }
+
+bool BitcoinExchange::validValue(const std::string& valueString, double& value)
+{
+	char* end;
+	errno = 0;
+	value = std::strtod(valueString.c_str(), &end);
+	// only accept a complete transformation - whole string of digits consumed
+	if (*end != '\0')
+		return (false);
+	// check for out of bounds
+	if (errno == ERANGE)
+		return (false);
+	if (value == HUGE_VAL || value == -HUGE_VAL)
+		return (false);
+	return (true);
+}
+
 // -----------------------------------------------------------------------------
 // OCF
 // -----------------------------------------------------------------------------

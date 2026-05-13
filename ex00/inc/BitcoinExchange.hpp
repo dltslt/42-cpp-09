@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:38:31 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 01:40:03 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 02:31:50 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class BitcoinExchange
 	void parsePriceData(const std::string&, std::string&, double&);
 	bool validInputData(const std::string&, std::string&, double&, int&);
 	bool validDate(const std::string&);
+	bool validValue(const std::string&, double&);
 	bool havePriceData(std::string&, double&);
   public:
 	// external control
