@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 03:05:52 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 03:08:07 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,6 +229,9 @@ bool BitcoinExchange::validValue(const std::string& valueString, double& value)
 	if (errno == ERANGE)
 		return (false);
 	if (value == HUGE_VAL || value == -HUGE_VAL)
+		return (false);
+	// check for NaN
+	if (value != value)
 		return (false);
 	return (true);
 }
