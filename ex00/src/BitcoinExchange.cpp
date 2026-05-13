@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 01:40:03 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 02:16:44 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,10 @@ void BitcoinExchange::parsePriceData(
 	if (sep == std::string::npos || line.find(',', sep + 1) != std::string::npos)
 		throw std::runtime_error("Error: bad database >> " + line);
 	key = trimSpaces(line.substr(0, sep));
-	// TODO date validation
+	if (!validDate(key))
+		throw std::runtime_error("Error: bad database >> " + line);
 	valueString = trimSpaces(line.substr(sep + 1,line.length()));
-	value = std::strtod(valueString.c_str(), NULL); // FIXME validation
+	value = std::strtod(valueString.c_str(), NULL); // FIXME add proper strtoX validation
 	// TODO value validation
 }
 
@@ -121,9 +122,13 @@ bool BitcoinExchange::validInputData(const std::string& line, std::string& date,
 		return (false);
 	}
 	date = trimSpaces(line.substr(0,sep));
-	// TODO date validation
+	if (!validDate(date))
+	{
+		std::cerr << "Error: bad input date, line " << lineNr << " >> " << line << '\n';
+		return (false);
+	}
 	valueString = trimSpaces(line.substr(13,line.length()));
-	value = std::strtod(valueString.c_str(), NULL); // FIXME validation
+	value = std::strtod(valueString.c_str(), NULL); // FIXME add proper strtoX validation
 	// TODO value validation
 	return (true);
 }
@@ -164,6 +169,30 @@ std::string BitcoinExchange::trimSpaces(const std::string& line)
 	return (line.substr(first, last));
 }
 
+bool BitcoinExchange::validDate(const std::string& date)
+{
+	int year, month, day;
+	const int dayMonth[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+	// basic character check
+	if (date.length() != 10 || date[4] != '-' || date[7] != '-')
+		return (false);
+	// transformation with advanced character check
+	// FIXME add proper strtoX validation
+	year = std::strtol(date.substr(0, 4).c_str(), NULL, 10);
+	month = std::strtol(date.substr(5, 2).c_str(), NULL, 10);
+	day = std::strtol(date.substr(8, 2).c_str(), NULL, 10);
+	// individual checks
+	if (year < 2009 || month < 1 || month > 12 || day < 1)
+		return (false);
+	if (month == 2 && day == 29)
+	{
+		if (year % 400 != 0 || year % 100 == 0 || year % 4 != 0)
+			return (false);
+	}
+	if (day > dayMonth[month - 1])
+		return (false);
+	return (true);
+}
 // -----------------------------------------------------------------------------
 // OCF
 // -----------------------------------------------------------------------------
