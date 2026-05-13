@@ -15,9 +15,9 @@
 PROG_NAME		?= RPN
 # ----------------------------------------------------------------------------
 # arguments for executing the program in the various modes
-RUN_ARGS_reg	?= 
-RUN_ARGS_asan	?= 
-RUN_ARGS_val	?= 
+RUN_ARGS_reg	?= "5 3 8 * 7 2 + 4 * + 6 3 / 9 1 - * + 0 2 3 + * 4 / + 2 3 2 * - + *"
+RUN_ARGS_asan	?= "5 3 8 * 7 2 + 4 * + 6 3 / 9 1 - * + 0 2 3 + * 4 / + 2 3 2 * - + *"
+RUN_ARGS_val	?= "5 3 8 * 7 2 + 4 * + 6 3 / 9 1 - * + 0 2 3 + * 4 / + 2 3 2 * - + *"
 # ----------------------------------------------------------------------------
 VALGRIND_FLAGS	?=	--leak-check=full \
 					--show-leak-kinds=all --errors-for-leak-kinds=all\
@@ -134,9 +134,9 @@ C_FLAGS	?= -Wall -Wextra -Werror -Wpedantic -Wshadow -std=c++98
 CINCL	= $(addprefix -I,$(INC_PATHS))
 
 # Mode-specific flags (extend as you like)
-C_FLAGS_reg		:=
-C_FLAGS_asan	:= -g -fsanitize=address -fno-omit-frame-pointer -O0
-C_FLAGS_val		:= -g -O0
+C_FLAGS_reg		:= 
+C_FLAGS_asan	:= -DDEBUG=1 -g -fsanitize=address -fno-omit-frame-pointer -O0
+C_FLAGS_val		:= -DDEBUG=1 -g -O0
 
 # Final flags used for compilation/linking (recursive; MODE is target-specific)
 CFLAGS	= $(C_FLAGS) $(C_FLAGS_$(MODE))
