@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 03:04:29 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/13 03:05:52 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,18 @@ void BitcoinExchange::loadPriceData()
 	std::string line;
 	std::string key;
 	double value;
-	// ---
+	// open file
 	if (!file.is_open())
 	{
 		file.open("../data.csv");
 		if (!file.is_open())
 			throw std::runtime_error("Error: could not open price data file.");
 	}
-	// ---
+	// check header
 	std::getline(file, line);
 	if (line != "date,exchange_rate")
 		throw std::runtime_error("Error: bad database >> " + line);
-	// ---
+	// get & check lines
 	while (std::getline(file, line))
 	{
 		parsePriceData(line, key, value);
@@ -97,14 +97,14 @@ void BitcoinExchange::processInputData(const std::string& inputFile)
 	double value;
 	double price;
 	int lineNr = 1;
-	// ---
+	// open file
 	if (!file.is_open())
 		throw std::runtime_error("Error: could not open input file.");
-	// ---
+	// check header
 	std::getline(file, line);
 	if (line != "date | value")
 		std::cerr << "Error: bad input, line " << lineNr++ << " >> " << line << '\n';
-	// ---
+	// get & check lines
 	while (std::getline(file, line))
 	{
 		if (!validInputData(line, date, value, lineNr))
