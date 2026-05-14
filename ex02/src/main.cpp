@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:05:04 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 10:10:44 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/14 15:24:17 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 	{
 		try
 		{
-			PmergeMe.execute(argv);
+			PmergeMe.execute(argc, argv);
 		}
 		catch (std::exception& e)
 		{
