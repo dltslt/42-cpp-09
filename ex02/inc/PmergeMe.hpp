@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/16 20:07:54 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/16 20:39:41 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 
 #include <vector>
 #include <list>
+
+#ifndef DEMONSTRATION
+# define DEMONSTRATION 0
+#endif
 
 class PmergeMe
 {
