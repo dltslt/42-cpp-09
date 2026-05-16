@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/16 20:24:50 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/16 20:37:38 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,10 @@ void PmergeMe::execute(int argc, char** argv)
 	std::for_each(sorted.begin(), sorted.end(), prtInt);
 	std::cout << std::endl;
 	std::for_each(sorted.begin(), sorted.end(), checkSorted);
+	if (sorted.size() < cVec_.size())
+		throw std::runtime_error("Error: some numbers got lost...");
+	else if (sorted.size() > cVec_.size())
+		throw std::runtime_error("Error: some numbers got duplicated...");
 }
 
 // -----------------------------------------------------------------------------
@@ -75,15 +79,17 @@ void PmergeMe::execute(int argc, char** argv)
 void PmergeMe::createJacobsthalSequence()
 {
 	std::size_t size = std::max(cVec_.size() / 2, static_cast<std::size_t>(1));
-	jacobsthal_.resize(size);
-	jacobsthal_[0] = 0;
+	jacobsthal_.reserve(size);
+	jacobsthal_.push_back(0);
 	if (size >= 2)
 	{
-		jacobsthal_[1] = 1;
+		jacobsthal_.push_back(1);
 	}
 	for (std::size_t i = 2; i < size; i++)
 	{
-		jacobsthal_[i] = jacobsthal_[i - 1] + 2 * jacobsthal_[i - 2];
+		jacobsthal_.push_back(jacobsthal_[i - 1] + 2 * jacobsthal_[i - 2]);
+		if (jacobsthal_[i] > size)
+		 break ;
 	}
 }
 
@@ -98,7 +104,7 @@ void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, std::vector<std
 	}
 	if (size == 3)
 		output[2] = static_cast<std::size_t>(2);
-	for (std::size_t i = 2; i < size; i++)
+	for (std::size_t i = 2; i < jacobsthal_.size(); i++)
 	{
 		std::size_t revStop = std::min(jacobsthal_[i], size - 1);
 		std::size_t revStart = jacobsthal_[i - 1] + 1;
