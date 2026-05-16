@@ -15,9 +15,9 @@
 PROG_NAME		?= PmergeMe
 # ----------------------------------------------------------------------------
 # arguments for executing the program in the various modes
-RUN_ARGS_reg	?= 982 845 9 352 1597 11
-RUN_ARGS_asan	?= 982 845 9 352 1597 11
-RUN_ARGS_val	?= 982 845 9 352 1597 11
+RUN_ARGS_reg	?= 982 845 9 352 1597 11 42
+RUN_ARGS_asan	?= 982 845 9 352 1597 11 42
+RUN_ARGS_val	?= 982 845 9 352 1597 11 42
 # ----------------------------------------------------------------------------
 VALGRIND_FLAGS	?=	--leak-check=full \
 					--show-leak-kinds=all --errors-for-leak-kinds=all\

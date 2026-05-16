@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/14 15:01:57 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/16 19:23:50 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,15 @@ class PmergeMe
 	// ---
 	std::vector<unsigned int> cVec_;
 	std::list<unsigned int> cLst_;
+	std::vector<std::size_t> jacobsthal_;
 	// ---
 	void parseInput(int, char**);
 	bool isValid(char*);
 	int getInputNumber(char*);
+	// ---
+	std::vector<unsigned int> FordJohnsonVec(std::vector<unsigned int>&);
+	void createJacobsthalSequence();
+	void buildJacobsthalIndex(const std::size_t&, std::vector<std::size_t>&);
 	public:
 	// ---
 	void execute(int, char**);
@@ -34,3 +39,41 @@ class PmergeMe
 	~PmergeMe();
 	PmergeMe& operator=(const PmergeMe&);
 };
+
+
+/*
+
+•  •  •  •  •  •  •  •  •  •  •  •  •  •  •  •  •  •  •
+
+[• •] [• •] [• •] [• •] [• •] [• •] [• •] [• •] [• •] •
+
+ a b   a b   a b   ...
+
+ a = bigger (winners)
+ b = smaller (losers)
+
+⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸
+⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸⎹•⎸
+
+[• •] [• •] [• •] [• •] •
+
+
+• | • | • | • | • | • | • | • | •
+• | • | • | • | • | • | • | • | •
+
+•• | • | • | • | • | • | • | • | •
+     • | • | • | • | • | • | • | •
+
+
+   ●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●
+  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /
+ /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /
+●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●
+
+
+●  ●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●––●
+     /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /
+    /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /  /
+   ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●  ●
+   ‾  ‾‾‾‾  ‾‾‾‾  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+*/

@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/14 15:38:15 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/16 19:58:44 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,22 @@
 // -----------------------------------------------------------------------------
 
 namespace {
-void prtInt(int n)
+void prtInt(unsigned int n)
 {
 	std::cout << n << ' ';
+}
+void prtVecInt(std::vector<unsigned int>& v)
+{
+	std::for_each(v.begin(), v.end(), prtInt);
+}
+
+void checkSorted(unsigned int n)
+{
+	static unsigned int last;
+
+	if (n < last)
+		throw (std::runtime_error("Error: not sorted correctly"));
+	last = n;
 }
 }
 
@@ -44,11 +57,174 @@ void PmergeMe::execute(int argc, char** argv)
 	std::cout << "List:\n";
 	std::for_each(cLst_.begin(), cLst_.end(), prtInt);
 	std::cout << '\n';
+	std::cout << "\nJacobsthal sequence for this set:\n";
+	createJacobsthalSequence();
+	std::for_each(jacobsthal_.begin(), jacobsthal_.end(), prtInt);
+	std::cout << "\n\n";
+	std::vector<unsigned int> sorted = FordJohnsonVec(cVec_);
+	std::cout << "\nSorted vector:\n";
+	std::for_each(sorted.begin(), sorted.end(), prtInt);
+	std::cout << std::endl;
+	std::for_each(sorted.begin(), sorted.end(), checkSorted);
 }
 
 // -----------------------------------------------------------------------------
 // SORTING
 // -----------------------------------------------------------------------------
+
+void PmergeMe::createJacobsthalSequence() // TODO this needs to be called on every recursion!! numbers are individual!
+{
+	std::size_t size = std::max(cVec_.size() / 2, static_cast<std::size_t>(1));
+	jacobsthal_.resize(size);
+	jacobsthal_[0] = 0;
+	if (size >= 2)
+	{
+		jacobsthal_[1] = 1;
+	}
+	for (std::size_t i = 2; i < size; i++)
+	{
+		jacobsthal_[i] = jacobsthal_[i - 1] + 2 * jacobsthal_[i - 2];
+	}
+}
+
+void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, std::vector<std::size_t>& output)
+{
+	std::size_t size = std::max(numPairs, static_cast<std::size_t>(1));
+	output.resize(size);
+	output[0] = static_cast<std::size_t>(0);
+	if (size >= 2)
+	{
+		output[1] = static_cast<std::size_t>(1);
+	}
+	if (size == 3)
+		output[2] = static_cast<std::size_t>(2);
+	for (std::size_t i = 2; i < size; i++)
+	{
+		std::size_t revStop = std::min(jacobsthal_[i], size - 1);
+		std::size_t revStart = jacobsthal_[i - 1] + 1;
+		std::size_t jSeqInd = revStop;
+		for (; revStart <= revStop; revStart++)
+		{
+			output[revStart] = jSeqInd--;
+		}
+	}
+}
+
+std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& data)
+{
+	// -- DEBUG
+	static unsigned int recursion;
+	recursion++;
+	std::cout << '[' << recursion << ']' << " current recursion data set: ";
+	std::for_each(data.begin(), data.end(), prtInt);
+	std::cout << '\n';
+	// -- baseline
+	if (data.size() <= 1)
+	{
+		recursion--;
+		return (data);
+	}
+	// -- information
+	bool hasUnpaired = data.size() & 1 ? true : false ;
+	unsigned int unpaired = data.back();
+	// -----------------------
+	//  pairing
+	// -----------------------
+	unsigned int numPairs = data.size() / 2;
+	unsigned int currPair = 0;
+	std::vector<std::pair<unsigned int, unsigned int> > pairs(numPairs);
+	std::cout <<'[' << recursion << ']' << " Pairs: | ";
+	for (unsigned int i = 0; i + 1 < data.size(); i += 2)
+	{
+		if (data[i] >= data [i + 1]) // TODO test if directly assigning first & second makes any difference
+			pairs[currPair] = std::make_pair(data[i], data[i + 1]);
+		else
+			pairs[currPair] = std::make_pair(data[i + 1], data[i]);
+		std::cout << pairs[currPair].first << ' ' << pairs[currPair].second << " | ";
+		currPair++;
+	}
+	std::cout << "\n\n";
+	// -----------------------
+	//  sort larger values
+	// -----------------------
+	std::vector<unsigned int> larger(numPairs);
+	for (unsigned int i = 0; i < numPairs; i++)
+		larger[i] = pairs[i].first;
+	std::vector<unsigned int> sortedLarger = FordJohnsonVec(larger);
+	// -----------------------
+	//  reorder pairs
+	// -----------------------
+	std::vector<std::pair<unsigned int, unsigned int> > sortedPairs(numPairs);
+	std::vector<bool> consumed(numPairs, false);
+	std::cout << "\n" << '[' << recursion << ']' << " numbers: " << data.size() 
+		 	  << "   pairs: " << numPairs;
+	std::cout << "\n" << '[' << recursion << ']' << " sorted Larger: ";
+	prtVecInt(sortedLarger);
+	std::cout << "\n" << '[' << recursion << ']' << " sorted Pairs: | ";
+	for (unsigned int i = 0; i < numPairs; i++)
+	{
+		for (unsigned int k = 0; k < numPairs; k++)
+		{
+			if (!consumed[k] && pairs[k].first == sortedLarger[i])
+			{
+				sortedPairs[i] = pairs[k];
+				consumed[k] = true;
+				std::cout << sortedPairs[i].first << ' ' << sortedPairs[i].second << " | ";
+				break ;
+			}
+		}
+	}
+	if (hasUnpaired)
+		std::cout << "\n" << '[' << recursion << ']' << " unpaired value: " << unpaired;
+	// -----------------------
+	//  build sorted chain
+	// -----------------------
+	std::vector<unsigned int> sorted;
+	sorted.reserve(data.size()); // reserve needs push_back, resize can do []
+	sorted.push_back(sortedPairs[0].second);
+	for (unsigned int i = 0; i < numPairs; i++)
+	{
+		sorted.push_back(sortedPairs[i].first);
+	}
+	std::cout << '\n' << '[' << recursion << ']' << " sorted (before insertion): ";
+	prtVecInt(sorted);
+	std::cout << '\n';
+	// -----------------------
+	//  insert smaller values
+	// -----------------------
+	std::vector<std::size_t> sequence;
+	buildJacobsthalIndex(numPairs, sequence);
+	std::vector<unsigned int>::iterator stop;
+	std::vector<unsigned int>::iterator where;
+	for (std::size_t iJ = 1; iJ < numPairs; iJ++)
+	{
+		std::size_t what = sequence[iJ];
+		std::size_t group = std::lower_bound(jacobsthal_.begin(), jacobsthal_.end(), what) - jacobsthal_.begin();
+		if (group > 1)
+			group--;
+		std::cout << "\tjacobsthal insertion, group #" << group;
+		std::cout << ": insert " << sortedPairs[what].second << " from pair #" << what << '\n';
+		stop = std::find(sorted.begin(), sorted.end(), sortedPairs[what].first);
+		where = std::lower_bound(sorted.begin(), stop, sortedPairs[what].second);
+		sorted.insert(where, sortedPairs[what].second);
+	}
+	std::cout << '[' << recursion << ']' << " sorted (after insertion): ";
+	prtVecInt(sorted);
+	std::cout << '\n';
+	// -----------------------
+	//  insert odd left over value
+	// -----------------------
+	if (hasUnpaired)
+	{
+		where = std::lower_bound(sorted.begin(), sorted.end(), unpaired);
+		sorted.insert(where, unpaired);
+		std::cout << '[' << recursion << ']' << " sorted (with unpaired value): ";
+		prtVecInt(sorted);
+		std::cout << '\n';
+	}
+	recursion--;
+	return (sorted);
+}
 
 // -----------------------------------------------------------------------------
 // MERGE
