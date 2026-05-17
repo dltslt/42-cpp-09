@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:24:42 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 22:47:29 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,22 +261,8 @@ void PmergeMe::FordJohnsonVec(std::vector<unsigned int>& rawSet, std::vector<uns
 // PARSING
 // -----------------------------------------------------------------------------
 
-void PmergeMe::parseInput(int argc, char**argv)
-{
-	int num;
-	for (int i = 1; i < argc; i++)
-	{
-		if (argv[i][0] == '\0')
-			continue ;
-		if (!isValid(argv[i]))
-			throw std::runtime_error("Error: Invalid input.");
-		num = getInputNumber(argv[i]);
-		cVec_.push_back(num);
-		cDeq_.push_back(num);
-	}
-}
-
-bool PmergeMe::isValid(char* item)
+namespace {
+bool isValid(const char* item)
 {
 	while (*item)
 	{
@@ -287,7 +273,7 @@ bool PmergeMe::isValid(char* item)
 	return (true);
 }
 
-int PmergeMe::getInputNumber(char* item)
+int getInputNumber(const char* item)
 {
 	char* end;
 	double num;
@@ -307,6 +293,54 @@ int PmergeMe::getInputNumber(char* item)
 	// if (num != num)
 	// 	return (false);
 	return (static_cast<int>(num));
+}
+
+std::string nextNumber(const std::string& str, std::string::size_type& pos)
+{
+	while (pos < str.size() && str[pos] == ' ')
+		pos++;
+	std::string::size_type start = pos;
+	pos = str.find(' ', start);
+	if (pos == std::string::npos)
+		pos = str.size();
+	return (str.substr(start, pos - start));
+}
+}
+
+void PmergeMe::parseInput(int argc, char**argv)
+{
+	int num;
+	if (argc == 2)
+	{
+		if (argv[1][0] == '\0')
+				return ;
+		std::string str(argv[1]);
+		std::string next;
+		std::string::size_type pos = 0;
+		while (pos < str.size())
+		{
+			next = nextNumber(str, pos);
+			if (!isValid(next.c_str()))
+				throw std::runtime_error("Error: Invalid input.");
+			if (next.empty())
+				continue ;
+			num = getInputNumber(next.c_str());
+			cVec_.push_back(num);
+			cDeq_.push_back(num);
+		}
+
+	}
+	else
+		for (int i = 1; i < argc; i++)
+		{
+			if (argv[i][0] == '\0')
+				continue ;
+			if (!isValid(argv[i]))
+				throw std::runtime_error("Error: Invalid input.");
+			num = getInputNumber(argv[i]);
+			cVec_.push_back(num);
+			cDeq_.push_back(num);
+		}
 }
 
 // -----------------------------------------------------------------------------
