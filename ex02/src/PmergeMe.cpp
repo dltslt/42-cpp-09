@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 13:49:35 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 14:46:13 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,23 @@ void prtInt(unsigned int n)
 {
 	std::cout << n << ' ';
 }
-void prtVecInt(std::vector<unsigned int>& v)
+
+template <typename T>
+void prtContainer(const T& c, const std::string& what)
 {
-	std::for_each(v.begin(), v.end(), prtInt);
+	std::cout << what << ":\n";
+	std::for_each(c.begin(), c.end(), prtInt);
+	std::cout << "\n\n";
+}
+
+template <typename T>
+void prtDemoContainer(const T& c, const unsigned int& recL, const std::string& what, const bool nl = false, const bool unP = false)
+{
+	std::cout << '[' << recL << "] " << what << ": ";
+	std::for_each(c.begin(), c.end(), prtInt);
+	std::cout << '\n';
+	if (nl && !unP)
+		std::cout << '\n';
 }
 
 void checkSorted(unsigned int n)
@@ -48,11 +62,11 @@ void prtRuntime(const std::clock_t& runtime, const std::string& type)
 	unsigned int ms, us;
 	ms = runtime / 1000 % 1000;
 	us = runtime % 1000;
-	std::cout << "\n\nTime to sort data stored in <" << type << ">: ";
+	std::cout << "Time to sort data stored in <" << type << ">: ";
 	std::cout << runtime / CLOCKS_PER_SEC << " sec "
 			  << ms << " ms "
 			  << us << " us "
-			  << "\t(clocks: " << runtime << ")\n";
+			  << "    (clocks: " << runtime << ")\n";
 }
 }
 
@@ -72,17 +86,11 @@ void PmergeMe::execute(int argc, char** argv)
 	parseInput(argc, argv);
 	createJacobsthalSequence();
 	// Output Line #1
-	std::cout << "Unsorted Set:\n"; // TODO consider a wrapper for these
-	std::for_each(cVec_.begin(), cVec_.end(), prtInt);
-	std::cout << '\n';
+	prtContainer(cVec_, "Unsorted Set");
 	if (DEMONSTRATION)
 	{
-		std::cout << "List:\n";
-		std::for_each(cLst_.begin(), cLst_.end(), prtInt);
-		std::cout << '\n';
-		std::cout << "\nJacobsthal sequence for this set:\n";
-		std::for_each(jacobsthal_.begin(), jacobsthal_.end(), prtInt);
-		std::cout << "\n\n";
+		prtContainer(cLst_, "List");
+		prtContainer(jacobsthal_, "Jacobsthal sequence for this set");
 	}
 	// sorting VECTOR
 	start = std::clock();
@@ -92,8 +100,9 @@ void PmergeMe::execute(int argc, char** argv)
 	// sorting LIST
 	// TODO second container, consider using deque and make sort() a template
 	// Output Line #2
-	std::cout << "\nSorted Set:\n";
-	std::for_each(sortedVec.begin(), sortedVec.end(), prtInt);
+	prtContainer(sortedVec, "Sorted Set");
+	// std::cout << "\nSorted Set:\n";
+	// std::for_each(sortedVec.begin(), sortedVec.end(), prtInt);
 	// Output Line #3
 	prtRuntime(runtimeVec, "std::vector");
 	// Output Line #4
@@ -157,17 +166,15 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 	static unsigned int recursion;
 	recursion++;
 	if (DEMONSTRATION)
-	{
-		std::cout << '[' << recursion << ']' << " current recursion data set: ";
-		std::for_each(data.begin(), data.end(), prtInt);
-		std::cout << '\n';
-	}
+		prtDemoContainer(data, recursion, "current recursion set");
 	// -----------------------
 	//  baseline
 	// -----------------------
 	if (data.size() <= 1)
 	{
 		recursion--;
+		if (DEMONSTRATION)
+			std::cout << '\n';
 		return (data);
 	}
 	// -----------------------
@@ -210,11 +217,11 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 	std::vector<bool> consumed(numPairs, false);
 	if (DEMONSTRATION)
 	{
-		std::cout << "\n" << '[' << recursion << ']' << " numbers: " << data.size() 
-				   << "   pairs: " << numPairs;
-		std::cout << "\n" << '[' << recursion << ']' << " sorted Larger: ";
-		prtVecInt(sortedLarger);
-		std::cout << "\n" << '[' << recursion << ']' << " sorted Pairs: | ";
+		std::cout << '[' << recursion << "] recursion level: " << recursion
+				  << "   numbers: " << data.size() 
+				  << "   pairs: " << numPairs << '\n';
+		prtDemoContainer(sortedLarger, recursion, "sorted Larger", false, hasUnpaired);
+		std::cout << '[' << recursion << ']' << " sorted Pairs: | ";
 	}
 	// order the pairs according to the sorted list of larger values
 	for (unsigned int i = 0; i < numPairs; i++)
@@ -231,8 +238,12 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 			}
 		}
 	}
-	if (DEMONSTRATION && hasUnpaired)
-		std::cout << "\n" << '[' << recursion << ']' << " unpaired value: " << unpaired;
+	if (DEMONSTRATION)
+	{
+		std::cout << '\n';
+		if (hasUnpaired)
+			std::cout << '[' << recursion << ']' << " unpaired value: " << unpaired << '\n';
+	}
 	// -----------------------
 	//  build sorted chain
 	// -----------------------
@@ -244,11 +255,7 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 		sorted.push_back(sortedPairs[i].first);
 	}
 	if (DEMONSTRATION)
-	{
-		std::cout << '\n' << '[' << recursion << ']' << " sorted (before insertion): ";
-		prtVecInt(sorted);
-		std::cout << '\n';
-	}
+		prtDemoContainer(sorted, recursion, "sorted (before insertion)");
 	// -----------------------
 	//  insert smaller values
 	// -----------------------
@@ -276,13 +283,9 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 		sorted.insert(where, sortedPairs[what].second);
 	}
 	if (DEMONSTRATION)
-	{
-		std::cout << '[' << recursion << ']' << " sorted (after insertion): ";
-		prtVecInt(sorted);
-		std::cout << '\n';
-	}
+		prtDemoContainer(sorted, recursion, "sorted (after insertion)", true, hasUnpaired);
 	// -----------------------
-	//  insert odd left over value
+	//  insert unpaired value
 	// -----------------------
 	if (hasUnpaired)
 	{
@@ -290,11 +293,7 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 		where = std::lower_bound(sorted.begin(), sorted.end(), unpaired);
 		sorted.insert(where, unpaired);
 		if (DEMONSTRATION)
-		{
-			std::cout << '[' << recursion << ']' << " sorted (with unpaired value): ";
-			prtVecInt(sorted);
-			std::cout << '\n';
-		}
+			prtDemoContainer(sorted, recursion, "sorted (with unpaired value)", true, false);
 	}
 	recursion--;
 	return (sorted);
