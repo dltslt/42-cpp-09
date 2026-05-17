@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 09:46:35 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 11:54:46 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 23:20:37 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,11 @@ void RPN::operation(char& c)
 	else if (c == '*')
 		result = left * right;
 	else if (c == '/')
+	{
+		if (right == 0)
+			throw std::runtime_error("Error: Division by 0 not possible.");
 		result = left / right;
+	}
 	if (DEBUG && stack_.size())
 		std::cout << "last stack & calculcation: " << stack_.top() << " | "
 				  << result << " = " << left << ' ' << c << ' ' << right
