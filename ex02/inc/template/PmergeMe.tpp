@@ -6,13 +6,29 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 18:08:01 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:21:17 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:44:02 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 #include <iostream>
 #include <algorithm>
+
+/*
+	NOTE ON THE CONTAINER TEMPLATES 
+
+	typically a container is defined like this (see reference):
+	template<
+		class T,
+		class Allocator = std::allocator<T>
+	> class deque;
+
+	thus std::vector<int> defaults to std::vector<int, std::allocator<int> >
+*/
+
+// -----------------------------------------------------------------------------
+// UTILITY
+// -----------------------------------------------------------------------------
 
 template <typename T>
 void PmergeMe::prtContainer(const T& c, const std::string& what)
@@ -38,9 +54,10 @@ void PmergeMe::prtDemoContainer(const T& c, const unsigned int& recL, const std:
 
 template <
 		template <typename, typename> class Container,
-		typename T
+		typename T,
+		typename A
 >
-void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, Container<T, std::allocator<T> >& output)
+void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, Container<T, std::allocator<A> >& output)
 {
 	std::size_t size = std::max(numPairs, static_cast<std::size_t>(1));
 	output.resize(size);
@@ -69,9 +86,10 @@ void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, Container<T, st
 
 template <
 		template <typename, typename> class Container,
-		typename T
+		typename T,
+		typename A
 >
-void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, Container<T, std::allocator<T> >& sorted)
+void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, Container<T, std::allocator<A> >& sorted)
 {
 	static unsigned int recursion;
 	recursion++;
@@ -95,14 +113,14 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	unsigned int currPair = 0;
 	unsigned int unpaired = rawSet.back();
 	bool hasUnpaired = rawSet.size() & 1 ? true : false ;
-	Container<T, std::allocator<T> > sortedLarger;
-	Container<T, std::allocator<T> > larger(numPairs);
-	Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > pairs(numPairs);
-	Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > sortedPairs(numPairs);
+	Container<T, std::allocator<A> > sortedLarger;
+	Container<T, std::allocator<A> > larger(numPairs);
+	Container<std::pair<T, T>, std::allocator<std::pair<A, A> > > pairs(numPairs);
+	Container<std::pair<T, T>, std::allocator<std::pair<A, A> > > sortedPairs(numPairs);
 	Container<bool, std::allocator<bool> > consumed(numPairs, false);
 	Container<std::size_t, std::allocator<std::size_t> > sequence;
-	typename Container<T, std::allocator<T> >::iterator stop;
-	typename Container<T, std::allocator<T> >::iterator where;
+	typename Container<T, std::allocator<A> >::iterator stop;
+	typename Container<T, std::allocator<A> >::iterator where;
 	if (DEMONSTRATION)
 		std::cout <<'[' << recursion << ']' << " Pairs: | ";
 	// -----------------------
