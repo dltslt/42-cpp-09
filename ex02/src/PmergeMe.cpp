@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 14:46:13 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 15:21:50 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,16 @@ void prtRuntime(const std::clock_t& runtime, const std::string& type)
 			  << us << " us "
 			  << "    (clocks: " << runtime << ")\n";
 }
+
+void someValidation(const std::vector<unsigned int>& sorted, std::vector<unsigned int>& raw)
+{
+	std::cout << std::endl;
+	std::for_each(sorted.begin(), sorted.end(), checkSorted);
+	if (sorted.size() < raw.size())
+		throw std::runtime_error("Error: some numbers got lost...");
+	else if (sorted.size() > raw.size())
+		throw std::runtime_error("Error: some numbers got duplicated...");
+}
 }
 
 // -----------------------------------------------------------------------------
@@ -76,12 +86,12 @@ void prtRuntime(const std::clock_t& runtime, const std::string& type)
 
 void PmergeMe::execute(int argc, char** argv)
 {
+	// preperation
 	std::vector<unsigned int> sortedVec;
 	std::clock_t start;
 	std::clock_t stop;
 	std::clock_t runtimeVec;
-	// std::clock_t runtimeLst;
-	// preperation
+	// std::clock_t runtimeDeq;
 	cVec_.reserve(argc - 1);
 	parseInput(argc, argv);
 	createJacobsthalSequence();
@@ -89,7 +99,7 @@ void PmergeMe::execute(int argc, char** argv)
 	prtContainer(cVec_, "Unsorted Set");
 	if (DEMONSTRATION)
 	{
-		prtContainer(cLst_, "List");
+		prtContainer(cDeq_, "Deque");
 		prtContainer(jacobsthal_, "Jacobsthal sequence for this set");
 	}
 	// sorting VECTOR
@@ -97,23 +107,16 @@ void PmergeMe::execute(int argc, char** argv)
 	sortedVec = FordJohnsonVec(cVec_);
 	stop = std::clock();
 	runtimeVec = stop - start;
-	// sorting LIST
+	// sorting DEQUE
 	// TODO second container, consider using deque and make sort() a template
 	// Output Line #2
 	prtContainer(sortedVec, "Sorted Set");
-	// std::cout << "\nSorted Set:\n";
-	// std::for_each(sortedVec.begin(), sortedVec.end(), prtInt);
 	// Output Line #3
 	prtRuntime(runtimeVec, "std::vector");
 	// Output Line #4
 	// TODO time container 2
 	// Some Validation
-	std::cout << std::endl;
-	std::for_each(sortedVec.begin(), sortedVec.end(), checkSorted);
-	if (sortedVec.size() < cVec_.size())
-		throw std::runtime_error("Error: some numbers got lost...");
-	else if (sortedVec.size() > cVec_.size())
-		throw std::runtime_error("Error: some numbers got duplicated...");
+	someValidation(sortedVec, cVec_);
 }
 
 // -----------------------------------------------------------------------------
@@ -314,7 +317,7 @@ void PmergeMe::parseInput(int argc, char**argv)
 			throw std::runtime_error("Error: Invalid input.");
 		num = getInputNumber(argv[i]);
 		cVec_.push_back(num);
-		cLst_.push_back(num);
+		cDeq_.push_back(num);
 	}
 }
 
@@ -385,7 +388,7 @@ int PmergeMe::getInputNumber(char* item)
 
 PmergeMe::PmergeMe() {}
 
-PmergeMe::PmergeMe(const PmergeMe& other) : cVec_(other.cVec_), cLst_(other.cLst_)
+PmergeMe::PmergeMe(const PmergeMe& other) : cVec_(other.cVec_), cDeq_(other.cDeq_)
 {}
 
 PmergeMe::~PmergeMe() {}
@@ -393,6 +396,6 @@ PmergeMe::~PmergeMe() {}
 PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 {
 	this->cVec_ = other.cVec_;
-	this->cLst_ = other.cLst_;
+	this->cDeq_ = other.cDeq_;
 	return (*this);
 }

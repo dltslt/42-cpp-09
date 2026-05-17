@@ -6,14 +6,14 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/16 20:39:41 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 15:15:35 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <vector>
-#include <list>
+#include <deque>
 
 #ifndef DEMONSTRATION
 # define DEMONSTRATION 0
@@ -24,7 +24,7 @@ class PmergeMe
 	private:
 	// ---
 	std::vector<unsigned int> cVec_;
-	std::list<unsigned int> cLst_;
+	std::deque<unsigned int> cDeq_;
 	std::vector<std::size_t> jacobsthal_;
 	// ---
 	void parseInput(int, char**);
