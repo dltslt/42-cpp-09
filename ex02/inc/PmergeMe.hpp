@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 15:15:35 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 15:38:07 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class PmergeMe
 	bool isValid(char*);
 	int getInputNumber(char*);
 	// ---
-	std::vector<unsigned int> FordJohnsonVec(std::vector<unsigned int>&);
+	void FordJohnsonVec(std::vector<unsigned int>&, std::vector<unsigned int>&);
 	void createJacobsthalSequence();
 	void buildJacobsthalIndex(const std::size_t&, std::vector<std::size_t>&);
 	public:

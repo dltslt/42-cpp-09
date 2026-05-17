@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 15:21:50 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 15:43:06 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void PmergeMe::execute(int argc, char** argv)
 	}
 	// sorting VECTOR
 	start = std::clock();
-	sortedVec = FordJohnsonVec(cVec_);
+	FordJohnsonVec(cVec_, sortedVec);
 	stop = std::clock();
 	runtimeVec = stop - start;
 	// sorting DEQUE
@@ -164,40 +164,41 @@ void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, std::vector<std
 }
 
 // TODO check if this is faster if i use an output parameter instead
-std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& data)
+void PmergeMe::FordJohnsonVec(std::vector<unsigned int>& rawSet, std::vector<unsigned int>& sorted)
 {
 	static unsigned int recursion;
 	recursion++;
 	if (DEMONSTRATION)
-		prtDemoContainer(data, recursion, "current recursion set");
+		prtDemoContainer(rawSet, recursion, "current recursion set");
 	// -----------------------
 	//  baseline
 	// -----------------------
-	if (data.size() <= 1)
+	if (rawSet.size() <= 1)
 	{
 		recursion--;
 		if (DEMONSTRATION)
 			std::cout << '\n';
-		return (data);
+		sorted = rawSet;
+		return ;
 	}
 	// -----------------------
 	//  pairing
 	// -----------------------
-	unsigned int numPairs = data.size() / 2;
+	unsigned int numPairs = rawSet.size() / 2;
 	unsigned int currPair = 0;
 	// fetch unpaired value
-	bool hasUnpaired = data.size() & 1 ? true : false ;
-	unsigned int unpaired = data.back();
+	bool hasUnpaired = rawSet.size() & 1 ? true : false ;
+	unsigned int unpaired = rawSet.back();
 	std::vector<std::pair<unsigned int, unsigned int> > pairs(numPairs);
 	if (DEMONSTRATION)
 		std::cout <<'[' << recursion << ']' << " Pairs: | ";
 	// build the pairs
-	for (unsigned int i = 0; i + 1 < data.size(); i += 2)
+	for (unsigned int i = 0; i + 1 < rawSet.size(); i += 2)
 	{
-		if (data[i] >= data [i + 1]) // TODO test if directly assigning first & second makes any difference
-			pairs[currPair] = std::make_pair(data[i], data[i + 1]);
+		if (rawSet[i] >= rawSet [i + 1]) // TODO test if directly assigning first & second makes any difference
+			pairs[currPair] = std::make_pair(rawSet[i], rawSet[i + 1]);
 		else
-			pairs[currPair] = std::make_pair(data[i + 1], data[i]);
+			pairs[currPair] = std::make_pair(rawSet[i + 1], rawSet[i]);
 		if (DEMONSTRATION)
 			std::cout << pairs[currPair].first << ' ' << pairs[currPair].second << " | ";
 		currPair++;
@@ -212,7 +213,8 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 	for (unsigned int i = 0; i < numPairs; i++)
 		larger[i] = pairs[i].first;
 	// sort the larger values
-	std::vector<unsigned int> sortedLarger = FordJohnsonVec(larger);
+	std::vector<unsigned int> sortedLarger;
+	FordJohnsonVec(larger, sortedLarger);
 	// -----------------------
 	//  reorder pairs
 	// -----------------------
@@ -221,7 +223,7 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 	if (DEMONSTRATION)
 	{
 		std::cout << '[' << recursion << "] recursion level: " << recursion
-				  << "   numbers: " << data.size() 
+				  << "   numbers: " << rawSet.size() 
 				  << "   pairs: " << numPairs << '\n';
 		prtDemoContainer(sortedLarger, recursion, "sorted Larger", false, hasUnpaired);
 		std::cout << '[' << recursion << ']' << " sorted Pairs: | ";
@@ -250,8 +252,8 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 	// -----------------------
 	//  build sorted chain
 	// -----------------------
-	std::vector<unsigned int> sorted;
-	sorted.reserve(data.size()); // reserve needs push_back, resize can do []
+	// std::vector<unsigned int> sorted;
+	sorted.reserve(rawSet.size()); // reserve needs push_back, resize can do []
 	sorted.push_back(sortedPairs[0].second);
 	for (unsigned int i = 0; i < numPairs; i++)
 	{
@@ -299,7 +301,6 @@ std::vector<unsigned int> PmergeMe::FordJohnsonVec(std::vector<unsigned int>& da
 			prtDemoContainer(sorted, recursion, "sorted (with unpaired value)", true, false);
 	}
 	recursion--;
-	return (sorted);
 }
 
 // -----------------------------------------------------------------------------
