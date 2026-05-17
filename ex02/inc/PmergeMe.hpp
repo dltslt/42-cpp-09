@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 22:29:52 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 23:00:45 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ class PmergeMe
 	std::deque<unsigned int> cDeq_;
 	std::vector<std::size_t> jacobsthal_;
 	// ---
-	void parseInput(int, char**);
+	void parsing(int, char**);
+	void parseChunk(const char*);
 	// ---
 	void createJacobsthalSequence();
 	// -- main execution
