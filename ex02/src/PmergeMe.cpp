@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/16 20:50:39 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 13:49:35 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,10 @@
 #include <cerrno>
 #include <cmath>
 #include <climits>
+#include <ctime>
 
 // -----------------------------------------------------------------------------
-// TESTING
+// UTILIY
 // -----------------------------------------------------------------------------
 
 namespace {
@@ -40,6 +41,19 @@ void checkSorted(unsigned int n)
 		throw (std::runtime_error("Error: not sorted correctly"));
 	last = n;
 }
+
+void prtRuntime(const std::clock_t& runtime, const std::string& type)
+{
+	// s => ms => us => ns
+	unsigned int ms, us;
+	ms = runtime / 1000 % 1000;
+	us = runtime % 1000;
+	std::cout << "\n\nTime to sort data stored in <" << type << ">: ";
+	std::cout << runtime / CLOCKS_PER_SEC << " sec "
+			  << ms << " ms "
+			  << us << " us "
+			  << "\t(clocks: " << runtime << ")\n";
+}
 }
 
 // -----------------------------------------------------------------------------
@@ -48,11 +62,17 @@ void checkSorted(unsigned int n)
 
 void PmergeMe::execute(int argc, char** argv)
 {
+	std::vector<unsigned int> sortedVec;
+	std::clock_t start;
+	std::clock_t stop;
+	std::clock_t runtimeVec;
+	// std::clock_t runtimeLst;
+	// preperation
 	cVec_.reserve(argc - 1);
 	parseInput(argc, argv);
 	createJacobsthalSequence();
 	// Output Line #1
-	std::cout << "Unsorted Set:\n";
+	std::cout << "Unsorted Set:\n"; // TODO consider a wrapper for these
 	std::for_each(cVec_.begin(), cVec_.end(), prtInt);
 	std::cout << '\n';
 	if (DEMONSTRATION)
@@ -64,20 +84,26 @@ void PmergeMe::execute(int argc, char** argv)
 		std::for_each(jacobsthal_.begin(), jacobsthal_.end(), prtInt);
 		std::cout << "\n\n";
 	}
-	std::vector<unsigned int> sorted = FordJohnsonVec(cVec_);
+	// sorting VECTOR
+	start = std::clock();
+	sortedVec = FordJohnsonVec(cVec_);
+	stop = std::clock();
+	runtimeVec = stop - start;
+	// sorting LIST
+	// TODO second container, consider using deque and make sort() a template
 	// Output Line #2
 	std::cout << "\nSorted Set:\n";
-	std::for_each(sorted.begin(), sorted.end(), prtInt);
+	std::for_each(sortedVec.begin(), sortedVec.end(), prtInt);
 	// Output Line #3
-	// TODO time container 1
+	prtRuntime(runtimeVec, "std::vector");
 	// Output Line #4
 	// TODO time container 2
 	// Some Validation
 	std::cout << std::endl;
-	std::for_each(sorted.begin(), sorted.end(), checkSorted);
-	if (sorted.size() < cVec_.size())
+	std::for_each(sortedVec.begin(), sortedVec.end(), checkSorted);
+	if (sortedVec.size() < cVec_.size())
 		throw std::runtime_error("Error: some numbers got lost...");
-	else if (sorted.size() > cVec_.size())
+	else if (sortedVec.size() > cVec_.size())
 		throw std::runtime_error("Error: some numbers got duplicated...");
 }
 
@@ -325,6 +351,34 @@ int PmergeMe::getInputNumber(char* item)
 	// 	return (false);
 	return (static_cast<int>(num));
 }
+
+// -----------------------------------------------------------------------------
+// TIME
+// -----------------------------------------------------------------------------
+
+/*
+	1 second (s) = 1.000 ms = 1.000.000 µs = 1.000.000.000 ns
+	1 millisecond (ms) = 1.000 µs = 1.000.000 ns
+	1 microsecond (µs) = 1.000 nanoseconds
+	
+	old C notes:
+	usleep() takes MICROseconds (µs) as input
+	nanosleep() takes nanoseconds (ns) as input
+	clock_gettime() returns time in seconds (s) and nanoseconds (ns)
+	struct timespec stores time in seconds (tv_sec) and nanoseconds (tv_nsec)
+	CLOCKMONOTONIC is not affected by changes in system time
+
+	new C++ approach of C solutions comes only with C++11: <chrono> !!
+
+	C++98 must use C implementations
+		via <ctime>
+			- std::clock()		CPU time consumed
+			- std::time()		wall-time in seconds
+		via <sys/time.h>
+			- gettimeofday()	wall-time in microseconds
+		via <time.h>
+			- clock_gettime()	real time in nanoseconds
+*/
 
 // -----------------------------------------------------------------------------
 // OCF
