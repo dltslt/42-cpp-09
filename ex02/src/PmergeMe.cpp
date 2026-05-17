@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:16:04 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:24:42 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,10 @@ void PmergeMe::execute(int argc, char** argv)
 	std::deque<unsigned int> sortedDeq;
 	std::clock_t start;
 	std::clock_t stop;
-	std::clock_t runtimeVec;
-	std::clock_t runtimeDeq;
 	cVec_.reserve(argc - 1);
 	parseInput(argc, argv);
 	createJacobsthalSequence();
-	// Output Line #1
-	prtContainer(cVec_, "Unsorted Set");
+	prtContainer(cVec_, "Unsorted Set");		// Output Line #1
 	if (DEMONSTRATION)
 	{
 		prtContainer(cDeq_, "Deque");
@@ -89,18 +86,13 @@ void PmergeMe::execute(int argc, char** argv)
 	start = std::clock();
 	FordJohnsonSort(cVec_, sortedVec);
 	stop = std::clock();
-	runtimeVec = stop - start;
-	// Output Line #2
-	prtContainer(sortedVec, "Sorted Set");
-	// Output Line #3
-	prtRuntime(runtimeVec, "std::vector");
+	prtContainer(sortedVec, "Sorted Set");		// Output Line #2
+	prtRuntime(stop - start, "std::vector");	// Output Line #3
 	// sorting DEQUE
 	start = std::clock();
 	FordJohnsonSort(cDeq_, sortedDeq);
 	stop = std::clock();
-	runtimeDeq = stop - start;
-	// Output Line #4
-	prtRuntime(runtimeDeq, "std::deque");
+	prtRuntime(stop - start, "std::deque");		// Output Line #4
 	// Some Validation
 	someValidation(sortedVec, cVec_);
 }
@@ -158,7 +150,7 @@ void PmergeMe::FordJohnsonVec(std::vector<unsigned int>& rawSet, std::vector<uns
 	// build the pairs
 	for (unsigned int i = 0; i + 1 < rawSet.size(); i += 2)
 	{
-		if (rawSet[i] >= rawSet [i + 1]) // TODO test if directly assigning first & second makes any difference
+		if (rawSet[i] >= rawSet [i + 1])
 			pairs[currPair] = std::make_pair(rawSet[i], rawSet[i + 1]);
 		else
 			pairs[currPair] = std::make_pair(rawSet[i + 1], rawSet[i]);
@@ -215,7 +207,6 @@ void PmergeMe::FordJohnsonVec(std::vector<unsigned int>& rawSet, std::vector<uns
 	// -----------------------
 	//  build sorted chain
 	// -----------------------
-	// std::vector<unsigned int> sorted;
 	sorted.reserve(rawSet.size()); // reserve needs push_back, resize can do []
 	sorted.push_back(sortedPairs[0].second);
 	for (unsigned int i = 0; i < numPairs; i++)

@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 18:08:01 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:14:56 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:21:17 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,8 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	// -----------------------
 	unsigned int numPairs = rawSet.size() / 2;
 	unsigned int currPair = 0;
-	// fetch unpaired value
-	bool hasUnpaired = rawSet.size() & 1 ? true : false ;
 	unsigned int unpaired = rawSet.back();
+	bool hasUnpaired = rawSet.size() & 1 ? true : false ;
 	Container<T, std::allocator<T> > sortedLarger;
 	Container<T, std::allocator<T> > larger(numPairs);
 	Container<std::pair<T, T>, std::allocator<std::pair<T, T> > > pairs(numPairs);
@@ -104,9 +103,6 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	Container<std::size_t, std::allocator<std::size_t> > sequence;
 	typename Container<T, std::allocator<T> >::iterator stop;
 	typename Container<T, std::allocator<T> >::iterator where;
-
-	
-	// std::vector<std::pair<unsigned int, unsigned int> > pairs(numPairs);
 	if (DEMONSTRATION)
 		std::cout <<'[' << recursion << ']' << " Pairs: | ";
 	// -----------------------
@@ -127,20 +123,13 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	// -----------------------
 	//  sort larger values
 	// -----------------------
-	
-	// std::vector<unsigned int> larger(numPairs);
 	// construct the set of larger values
 	for (unsigned int i = 0; i < numPairs; i++)
 		larger[i] = pairs[i].first;
-	// sort the larger values
-	
-	// std::vector<unsigned int> sortedLarger;
 	FordJohnsonSort(larger, sortedLarger);
 	// -----------------------
 	//  reorder pairs
 	// -----------------------
-	// std::vector<std::pair<unsigned int, unsigned int> > sortedPairs(numPairs);
-	// std::vector<bool> consumed(numPairs, false);
 	if (DEMONSTRATION)
 	{
 		std::cout << '[' << recursion << "] recursion level: " << recursion
@@ -154,10 +143,8 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	{
 		for (unsigned int k = 0; k < numPairs; k++)
 		{
-			// std::cout << "\np.first | second " << pairs[k].first << " | " << pairs[k].second<< " sortedLarger " << sortedLarger[i] << '\n';
 			if (!consumed[k] && pairs[k].first == sortedLarger[i])
 			{
-				// std::cout << pairs[i].first << ' ' << pairs[i].second << " | ";
 				sortedPairs[i] = pairs[k];
 				consumed[k] = true;
 				if (DEMONSTRATION)
@@ -180,18 +167,13 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	// because .resize also initializes with zero
 	sorted.push_back(sortedPairs[0].second);
 	for (unsigned int i = 0; i < numPairs; i++)
-	{
 		sorted.push_back(sortedPairs[i].first);
-	}
 	if (DEMONSTRATION)
 		prtDemoContainer(sorted, recursion, "sorted (before insertion)");
 	// -----------------------
 	//  insert smaller values
 	// -----------------------
-	// std::vector<std::size_t> sequence;
 	buildJacobsthalIndex(numPairs, sequence);
-	// std::vector<unsigned int>::iterator stop;
-	// std::vector<unsigned int>::iterator where;
 	for (std::size_t iJ = 1; iJ < numPairs; iJ++)
 	{
 		std::size_t what = sequence[iJ];
