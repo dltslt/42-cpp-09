@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 15:38:07 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 19:25:59 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 #include <vector>
 #include <deque>
+#include <string>
 
 #ifndef DEMONSTRATION
-# define DEMONSTRATION 0
+# define DEMONSTRATION 1
 #endif
 
 class PmergeMe
@@ -33,7 +34,21 @@ class PmergeMe
 	// ---
 	void FordJohnsonVec(std::vector<unsigned int>&, std::vector<unsigned int>&);
 	void createJacobsthalSequence();
-	void buildJacobsthalIndex(const std::size_t&, std::vector<std::size_t>&);
+	// -- main execution
+	template <
+		template <typename, typename> class Container,
+		typename T>
+	void buildJacobsthalIndex(const std::size_t&, Container<T, std::allocator<T> >&);
+	template <
+		template <typename, typename> class Container,
+		typename T>
+	void FordJohnsonSort(const Container<T, std::allocator<T> >&, Container<T, std::allocator<T> >&);
+	// -- utility
+	static void prtInt(const unsigned int&);
+	template <typename T>
+	void prtContainer(const T&, const std::string&);
+	template <typename T>
+	void prtDemoContainer(const T&, const unsigned int&, const std::string& what, const bool = false, const bool = false);
 	public:
 	// ---
 	void execute(int, char**);
@@ -44,6 +59,7 @@ class PmergeMe
 	PmergeMe& operator=(const PmergeMe&);
 };
 
+#include "template/PmergeMe.tpp"
 
 /*
 

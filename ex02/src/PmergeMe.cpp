@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 15:43:06 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 19:25:28 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,6 @@
 // -----------------------------------------------------------------------------
 
 namespace {
-void prtInt(unsigned int n)
-{
-	std::cout << n << ' ';
-}
-
-template <typename T>
-void prtContainer(const T& c, const std::string& what)
-{
-	std::cout << what << ":\n";
-	std::for_each(c.begin(), c.end(), prtInt);
-	std::cout << "\n\n";
-}
-
-template <typename T>
-void prtDemoContainer(const T& c, const unsigned int& recL, const std::string& what, const bool nl = false, const bool unP = false)
-{
-	std::cout << '[' << recL << "] " << what << ": ";
-	std::for_each(c.begin(), c.end(), prtInt);
-	std::cout << '\n';
-	if (nl && !unP)
-		std::cout << '\n';
-}
-
 void checkSorted(unsigned int n)
 {
 	static unsigned int last;
@@ -80,6 +57,11 @@ void someValidation(const std::vector<unsigned int>& sorted, std::vector<unsigne
 }
 }
 
+void PmergeMe::prtInt(const unsigned int& n)
+{
+	std::cout << n << ' ';
+}
+
 // -----------------------------------------------------------------------------
 // INTERFACE
 // -----------------------------------------------------------------------------
@@ -88,10 +70,11 @@ void PmergeMe::execute(int argc, char** argv)
 {
 	// preperation
 	std::vector<unsigned int> sortedVec;
+	std::deque<unsigned int> sortedDeq;
 	std::clock_t start;
 	std::clock_t stop;
 	std::clock_t runtimeVec;
-	// std::clock_t runtimeDeq;
+	std::clock_t runtimeDeq;
 	cVec_.reserve(argc - 1);
 	parseInput(argc, argv);
 	createJacobsthalSequence();
@@ -104,17 +87,21 @@ void PmergeMe::execute(int argc, char** argv)
 	}
 	// sorting VECTOR
 	start = std::clock();
-	FordJohnsonVec(cVec_, sortedVec);
+	FordJohnsonSort(cVec_, sortedVec);
 	stop = std::clock();
 	runtimeVec = stop - start;
-	// sorting DEQUE
-	// TODO second container, consider using deque and make sort() a template
 	// Output Line #2
 	prtContainer(sortedVec, "Sorted Set");
 	// Output Line #3
 	prtRuntime(runtimeVec, "std::vector");
+	// sorting DEQUE
+	start = std::clock();
+	FordJohnsonSort(cDeq_, sortedDeq);
+	stop = std::clock();
+	runtimeDeq = stop - start;
 	// Output Line #4
-	// TODO time container 2
+	prtRuntime(runtimeDeq, "std::deque");
+	prtContainer(sortedDeq, "Sorted Set");
 	// Some Validation
 	someValidation(sortedVec, cVec_);
 }
@@ -137,29 +124,6 @@ void PmergeMe::createJacobsthalSequence()
 		jacobsthal_.push_back(jacobsthal_[i - 1] + 2 * jacobsthal_[i - 2]);
 		if (jacobsthal_[i] > size)
 		 break ;
-	}
-}
-
-void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, std::vector<std::size_t>& output)
-{
-	std::size_t size = std::max(numPairs, static_cast<std::size_t>(1));
-	output.resize(size);
-	output[0] = static_cast<std::size_t>(0);
-	if (size >= 2)
-	{
-		output[1] = static_cast<std::size_t>(1);
-	}
-	if (size == 3)
-		output[2] = static_cast<std::size_t>(2);
-	for (std::size_t i = 2; i < jacobsthal_.size(); i++)
-	{
-		std::size_t revStop = std::min(jacobsthal_[i], size - 1);
-		std::size_t revStart = jacobsthal_[i - 1] + 1;
-		std::size_t jSeqInd = revStop;
-		for (; revStart <= revStop; revStart++)
-		{
-			output[revStart] = jSeqInd--;
-		}
 	}
 }
 

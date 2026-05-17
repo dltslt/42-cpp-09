@@ -76,7 +76,7 @@ SRC_BON		?=
 # ============================================================================ #
 # List project headers with relative path to trigger rebuilds on header change.
 # libft header is added automatically
-HEADER		?= inc/PmergeMe.hpp
+HEADER		?= inc/PmergeMe.hpp inc/template/PmergeMe.tpp
 # Include directories (space-separated). Used to build CINCL flags.
 INC_PATHS	?= inc/
 
