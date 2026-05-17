@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 18:08:01 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:51:10 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:53:58 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,8 @@ void PmergeMe::prtDemoContainer(const T& c, const unsigned int& recL, const std:
 // JACOBSTHAL TEMPLATE
 // -----------------------------------------------------------------------------
 
-template <
-		template <typename, typename> class Container,
-		typename T,
-		typename A
->
-void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, Container<T, std::allocator<A> >& output)
+template <typename T>
+void PmergeMe::buildJacobsthalIndex(const std::size_t& numPairs, T& output)
 {
 	std::size_t size = std::max(numPairs, static_cast<std::size_t>(1));
 	output.resize(size);
