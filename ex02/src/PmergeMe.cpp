@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 19:25:28 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:16:04 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void PmergeMe::execute(int argc, char** argv)
 	runtimeDeq = stop - start;
 	// Output Line #4
 	prtRuntime(runtimeDeq, "std::deque");
-	prtContainer(sortedDeq, "Sorted Set");
 	// Some Validation
 	someValidation(sortedVec, cVec_);
 }
@@ -127,7 +126,7 @@ void PmergeMe::createJacobsthalSequence()
 	}
 }
 
-// TODO check if this is faster if i use an output parameter instead
+// DEPRECATED -- this is left here for comparison
 void PmergeMe::FordJohnsonVec(std::vector<unsigned int>& rawSet, std::vector<unsigned int>& sorted)
 {
 	static unsigned int recursion;

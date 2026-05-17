@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 18:08:01 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 20:45:24 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:14:56 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,13 +175,13 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<T> >& rawSet, C
 	// -----------------------
 	//  build sorted chain
 	// -----------------------
-	// std::vector<unsigned int> sorted;
-	sorted.resize(rawSet.size()); // reserve needs push_back, resize can do []
-	sorted[0] = sortedPairs[0].second;
+	// due to the template, i cannot use .reserve anymore
+	// using .resize has the problem, that .insert doesn't work correctly
+	// because .resize also initializes with zero
+	sorted.push_back(sortedPairs[0].second);
 	for (unsigned int i = 0; i < numPairs; i++)
 	{
-		// std::cout <<"i " << i << "sorte pair " << sortedPairs[i].first << " sorted " << sorted[i] << '\n'; 
-		sorted[i] = sortedPairs[i].first;
+		sorted.push_back(sortedPairs[i].first);
 	}
 	if (DEMONSTRATION)
 		prtDemoContainer(sorted, recursion, "sorted (before insertion)");

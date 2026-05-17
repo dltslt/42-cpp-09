@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 19:25:59 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:15:01 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <string>
 
 #ifndef DEMONSTRATION
-# define DEMONSTRATION 1
+# define DEMONSTRATION 0
 #endif
 
 class PmergeMe
@@ -32,7 +32,6 @@ class PmergeMe
 	bool isValid(char*);
 	int getInputNumber(char*);
 	// ---
-	void FordJohnsonVec(std::vector<unsigned int>&, std::vector<unsigned int>&);
 	void createJacobsthalSequence();
 	// -- main execution
 	template <
@@ -49,6 +48,8 @@ class PmergeMe
 	void prtContainer(const T&, const std::string&);
 	template <typename T>
 	void prtDemoContainer(const T&, const unsigned int&, const std::string& what, const bool = false, const bool = false);
+	// -- DEPRECATED (archive only)
+	void FordJohnsonVec(std::vector<unsigned int>&, std::vector<unsigned int>&);
 	public:
 	// ---
 	void execute(int, char**);
