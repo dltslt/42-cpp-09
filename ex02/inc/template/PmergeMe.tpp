@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 18:08:01 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:44:02 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/17 21:51:10 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, C
 	// -----------------------
 	for (unsigned int i = 0; i + 1 < rawSet.size(); i += 2)
 	{
-		if (rawSet[i] >= rawSet [i + 1]) // TODO test if directly assigning first & second makes any difference
+		if (rawSet[i] >= rawSet [i + 1]) // not using make_pair actually slower
 			pairs[currPair] = std::make_pair(rawSet[i], rawSet[i + 1]);
 		else
 			pairs[currPair] = std::make_pair(rawSet[i + 1], rawSet[i]);
