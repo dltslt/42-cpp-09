@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 18:08:01 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 21:53:58 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/18 15:53:50 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, C
 	unsigned int currPair = 0;
 	unsigned int unpaired = rawSet.back();
 	bool hasUnpaired = rawSet.size() & 1 ? true : false ;
-	Container<T, std::allocator<A> > sortedLarger;
 	Container<T, std::allocator<A> > larger(numPairs);
 	Container<std::pair<T, T>, std::allocator<std::pair<A, A> > > pairs(numPairs);
 	Container<std::pair<T, T>, std::allocator<std::pair<A, A> > > sortedPairs(numPairs);
@@ -140,7 +139,7 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, C
 	// construct the set of larger values
 	for (unsigned int i = 0; i < numPairs; i++)
 		larger[i] = pairs[i].first;
-	FordJohnsonSort(larger, sortedLarger);
+	FordJohnsonSort(larger, sorted);
 	// -----------------------
 	//  reorder pairs
 	// -----------------------
@@ -149,7 +148,7 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, C
 		std::cout << '[' << recursion << "] recursion level: " << recursion
 				  << "   numbers: " << rawSet.size() 
 				  << "   pairs: " << numPairs << '\n';
-		prtDemoContainer(sortedLarger, recursion, "sorted Larger", false, hasUnpaired);
+		prtDemoContainer(sorted, recursion, "sorted Larger", false, hasUnpaired);
 		std::cout << '[' << recursion << ']' << " sorted Pairs: | ";
 	}
 	// order the pairs according to the sorted list of larger values
@@ -157,7 +156,7 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, C
 	{
 		for (unsigned int k = 0; k < numPairs; k++)
 		{
-			if (!consumed[k] && pairs[k].first == sortedLarger[i])
+			if (!consumed[k] && pairs[k].first == sorted[i])
 			{
 				sortedPairs[i] = pairs[k];
 				consumed[k] = true;
@@ -174,19 +173,11 @@ void PmergeMe::FordJohnsonSort(const Container<T, std::allocator<A> >& rawSet, C
 			std::cout << '[' << recursion << ']' << " unpaired value: " << unpaired << '\n';
 	}
 	// -----------------------
-	//  build sorted chain
-	// -----------------------
-	// due to the template, i cannot use .reserve anymore
-	// using .resize has the problem, that .insert doesn't work correctly
-	// because .resize also initializes with zero
-	sorted.push_back(sortedPairs[0].second);
-	for (unsigned int i = 0; i < numPairs; i++)
-		sorted.push_back(sortedPairs[i].first);
-	if (DEMONSTRATION)
-		prtDemoContainer(sorted, recursion, "sorted (before insertion)");
-	// -----------------------
 	//  insert smaller values
 	// -----------------------
+	if (DEMONSTRATION)
+		prtDemoContainer(sorted, recursion, "sorted (before insertion)");
+	sorted.insert(sorted.begin(),sortedPairs[0].second);
 	buildJacobsthalIndex(numPairs, sequence);
 	for (std::size_t iJ = 1; iJ < numPairs; iJ++)
 	{

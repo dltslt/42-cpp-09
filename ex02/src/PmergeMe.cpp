@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:03:27 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 23:06:35 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/18 15:58:41 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,32 +69,30 @@ void PmergeMe::prtInt(const unsigned int& n)
 void PmergeMe::execute(int argc, char** argv)
 {
 	// preperation
-	std::vector<unsigned int> sortedVec;
-	std::deque<unsigned int> sortedDeq;
 	std::clock_t start;
 	std::clock_t stop;
-	cVec_.reserve(argc - 1);
+	rawVec_.reserve(argc - 1);
 	parsing(argc, argv);
 	createJacobsthalSequence();
-	prtContainer(cVec_, "Unsorted Set");		// Output Line #1
+	prtContainer(rawVec_, "Unsorted Set");		// Output Line #1
 	if (DEMONSTRATION)
 	{
-		prtContainer(cDeq_, "Deque");
+		prtContainer(rawDeq_, "Deque");
 		prtContainer(jacobsthal_, "Jacobsthal sequence for this set");
 	}
 	// sorting VECTOR
 	start = std::clock();
-	FordJohnsonSort(cVec_, sortedVec);
+	FordJohnsonSort(rawVec_, sortedVec_);
 	stop = std::clock();
-	prtContainer(sortedVec, "Sorted Set");		// Output Line #2
+	prtContainer(sortedVec_, "Sorted Set");		// Output Line #2
 	prtRuntime(stop - start, "std::vector");	// Output Line #3
 	// sorting DEQUE
 	start = std::clock();
-	FordJohnsonSort(cDeq_, sortedDeq);
+	FordJohnsonSort(rawDeq_, sortedDeq_);
 	stop = std::clock();
 	prtRuntime(stop - start, "std::deque");		// Output Line #4
 	// Some Validation
-	someValidation(sortedVec, cVec_);
+	someValidation(sortedVec_, rawVec_);
 }
 
 // -----------------------------------------------------------------------------
@@ -103,7 +101,7 @@ void PmergeMe::execute(int argc, char** argv)
 
 void PmergeMe::createJacobsthalSequence()
 {
-	std::size_t size = std::max(cVec_.size() / 2, static_cast<std::size_t>(1));
+	std::size_t size = std::max(rawVec_.size() / 2, static_cast<std::size_t>(1));
 	jacobsthal_.reserve(size);
 	jacobsthal_.push_back(0);
 	if (size >= 2)
@@ -331,8 +329,8 @@ void PmergeMe::parseChunk(const char* str)
 	if (!isValid(str))
 		throw std::runtime_error("Error: Invalid input.");
 	num = getInputNumber(str);
-	cVec_.push_back(num);
-	cDeq_.push_back(num);
+	rawVec_.push_back(num);
+	rawDeq_.push_back(num);
 }
 
 // -----------------------------------------------------------------------------
@@ -369,14 +367,14 @@ void PmergeMe::parseChunk(const char* str)
 
 PmergeMe::PmergeMe() {}
 
-PmergeMe::PmergeMe(const PmergeMe& other) : cVec_(other.cVec_), cDeq_(other.cDeq_)
+PmergeMe::PmergeMe(const PmergeMe& other) : rawVec_(other.rawVec_), rawDeq_(other.rawDeq_)
 {}
 
 PmergeMe::~PmergeMe() {}
 
 PmergeMe& PmergeMe::operator=(const PmergeMe& other)
 {
-	this->cVec_ = other.cVec_;
-	this->cDeq_ = other.cDeq_;
+	this->rawVec_ = other.rawVec_;
+	this->rawDeq_ = other.rawDeq_;
 	return (*this);
 }

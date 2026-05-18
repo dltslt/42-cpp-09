@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 10:01:15 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 23:00:45 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/18 15:58:41 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ class PmergeMe
 {
 	private:
 	// ---
-	std::vector<unsigned int> cVec_;
-	std::deque<unsigned int> cDeq_;
+	std::vector<unsigned int> rawVec_;
+	std::deque<unsigned int> rawDeq_;
+	std::vector<unsigned int> sortedVec_;
+	std::deque<unsigned int> sortedDeq_;
 	std::vector<std::size_t> jacobsthal_;
 	// ---
 	void parsing(int, char**);
