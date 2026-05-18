@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/18 08:46:09 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/18 08:47:02 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,6 +221,8 @@ bool BitcoinExchange::validDate(const std::string& date)
 
 bool BitcoinExchange::validValue(const std::string& valueString, double& value)
 {
+	if (valueString.empty())
+		return (false);
 	char* end;
 	errno = 0;
 	value = std::strtod(valueString.c_str(), &end);
