@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/12 21:45:30 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/13 03:08:07 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/18 08:14:39 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,10 +209,10 @@ bool BitcoinExchange::validDate(const std::string& date)
 		return (false);
 	if (month == 2 && day == 29)
 	{
-		if (year % 400 != 0 || year % 100 == 0 || year % 4 != 0)
+		if (year % 4 != 0 || (year % 100 == 0 && year % 400 != 0))
 			return (false);
 	}
-	if (day > dayMonth[month - 1])
+	else if (day > dayMonth[month - 1])
 		return (false);
 	return (true);
 }
