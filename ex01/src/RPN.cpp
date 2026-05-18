@@ -6,7 +6,7 @@
 /*   By: mweghofe <mweghofe@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/13 09:46:35 by mweghofe          #+#    #+#             */
-/*   Updated: 2026/05/17 23:20:37 by mweghofe         ###   ########.fr       */
+/*   Updated: 2026/05/18 08:54:26 by mweghofe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void RPN::execute(char*& argv)
 	for (std::string::size_type i = 0; i < expression.size(); i++)
 	{
 		// 1) skip leading spaces before the character
-		while (expression[i] == ' ')
+		while (i < expression.size() && expression[i] == ' ')
 			i++;
 		// 2) check if still inside string
 		if (i == expression.size())
@@ -50,7 +50,7 @@ void RPN::execute(char*& argv)
 			throw std::runtime_error(
 				"Error: bad input >> " + expression.substr(i));
 		// 5) skip trailing spaces after the character
-		while (expression[i] == ' ')
+		while (i < expression.size() && expression[i] == ' ')
 			i++;
 	}
 	if (stack_.size() > 1)
